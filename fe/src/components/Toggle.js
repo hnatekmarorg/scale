@@ -1,7 +1,7 @@
-import React from 'react';
-
 const Toggle = ({ isActive, onToggle, disabled = false }) => {
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!disabled) {
       onToggle(!isActive);
     }
@@ -18,7 +18,8 @@ const Toggle = ({ isActive, onToggle, disabled = false }) => {
         background: isActive ? 'var(--success)' : 'var(--gray)',
         borderRadius: '15px',
         cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'background 0.2s'
+        transition: 'background 0.2s',
+        userSelect: 'none'
       }}
     >
       <div 
