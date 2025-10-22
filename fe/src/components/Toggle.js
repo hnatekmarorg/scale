@@ -15,7 +15,7 @@ const Toggle = ({ isActive, onToggle, disabled = false }) => {
         position: 'relative',
         width: '50px',
         height: '25px',
-        background: isActive ? '#10b981' : '#e5e7eb',
+        background: isActive ? 'var(--success)' : 'var(--gray)',
         borderRadius: '15px',
         cursor: disabled ? 'not-allowed' : 'pointer',
         transition: 'background 0.2s'

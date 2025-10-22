@@ -3,7 +3,7 @@ import { useDeployments } from '../hooks/useDeployments';
 import DeploymentRow from './DeploymentRow';
 import api from '../services/api';
 
-const Dashboard = () => {
+const Dashboard = ({ darkMode, setDarkMode }) => {
   const { deployments, loading, error, refreshDeployments } = useDeployments();
   const [filter, setFilter] = useState('');
   const [operationLoading, setOperationLoading] = useState(null);
@@ -63,6 +63,15 @@ const Dashboard = () => {
       <header>
         <h1>SCALE</h1>
         <p className="subtitle">Kubernetes Auto-Scaling via Labels</p>
+        <div className="dark-mode-toggle">
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="dark-mode-button"
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </div>
       </header>
 
       <div className="filter-bar">
