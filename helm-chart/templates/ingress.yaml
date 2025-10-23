@@ -42,6 +42,22 @@ spec:
       http:
         paths:
           {{- range .paths }}
+          {{- if eq .path "/" }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $fullName }}-frontend
+                port:
+                  number: 80
+              {{- else }}
+              serviceName: {{ $fullName }}-frontend
+              servicePort: 80
+              {{- end }}
+          {{- else if eq .path "/api" }}
           - path: {{ .path }}
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: {{ .pathType }}
@@ -56,6 +72,7 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+          {{- end }}
           {{- end }}
     {{- end }}
 {{- end }}

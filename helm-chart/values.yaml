@@ -9,17 +9,24 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+frontendImage:
+  repository: scale-frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
 service:
   type: ClusterIP
   port: 8080
 
 ingress:
-  enabled: false
-  className: ""
+  enabled: true
+  className: nginx
   hosts:
     - host: scale.example.com
       paths:
         - path: /
+          pathType: Prefix
+        - path: /api
           pathType: Prefix
   tls: []
 
@@ -40,13 +47,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-# Kubernetes API server configuration
-kubeApi:
-  # Whether to use in-cluster config or kubeconfig file
-  useInClusterConfig: true
-  # Path to kubeconfig file (only used if useInClusterConfig is false)
-  kubeconfigPath: "/home/user/.kube/config"
 
 # ServiceAccount configuration
 serviceAccount:
