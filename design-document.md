@@ -1,6 +1,7 @@
 ### 📄 **SCALE Design Document**  
 *Version 1.0 | Core Workflow: "Label → Toggle → Scale"*
 
+
 #### ✅ **Problem Solved**  
 Manual scaling via `kubectl scale` or Helm is slow. SCALE automates it by **reading labels** on deployments (no YAML edits needed).
 
