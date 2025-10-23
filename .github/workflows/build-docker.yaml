@@ -4,6 +4,7 @@ on:
     paths:
       - fe/**
       - be/**
+      - .github/workflows/build-docker.yaml
 
 jobs:
   build:
