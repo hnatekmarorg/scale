@@ -22,7 +22,7 @@ ingress:
   enabled: true
   className: nginx
   hosts:
-    - host: scale.example.com
+    - host: scale.hnatekmar.dev
       paths:
         - path: /
           pathType: Prefix

@@ -9,6 +9,7 @@ spec:
   selector:
     matchLabels:
       {{- include "scale-backend.selectorLabels" . | nindent 6 }}
+      app: backend
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -17,6 +18,7 @@ spec:
       {{- end }}
       labels:
         {{- include "scale-backend.selectorLabels" . | nindent 8 }}
+        app: backend
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -35,14 +37,6 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

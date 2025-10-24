@@ -20,6 +20,7 @@ metadata:
     {{- include "scale-backend.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
