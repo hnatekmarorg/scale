@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDeployments } from '../hooks/useDeployments';
 import DeploymentRow from './DeploymentRow';
 import api from '../services/api';
@@ -21,12 +21,17 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const { deployments, loading, error, refreshDeployments } = useDeployments();
   const [filter, setFilter] = useState('');
   const [operationLoading, setOperationLoading] = useState<string | null>(null);
+  const [deploymentsList, setDeploymentsList] = useState<Deployment[]>([]);
+
+  useEffect(() => {
+    setDeploymentsList(deployments);
+  }, [deployments]);
 
   const filteredDeployments = useMemo(() => {
-    if (!filter) return deployments;
+    if (!filter) return deploymentsList;
     
     const filterLower = filter.toLowerCase();
-    return deployments.filter(deployment => {
+    return deploymentsList.filter(deployment => {
         const labelString = Object.entries(deployment.labels)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => `${key}=${value}`)
@@ -38,17 +43,27 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         labelString.includes(filterLower)
       );
     });
-  }, [deployments, filter]);
+  }, [deploymentsList, filter]);
+
+const updateDeploymentState = (namespace: string, deployment: string, newState: 'on' | 'off') => {
+    setDeploymentsList(prev => prev.map(dep => {
+      if (dep.namespace === namespace && dep.name === deployment) {
+        const targetReplicas = newState === 'on' ? dep.onReplicas : dep.offReplicas;
+        return { ...dep, currentReplicas: targetReplicas };
+      }
+      return dep;
+    }));
+  };
 
   const handleToggle = async (namespace: string, deployment: string, state: 'on' | 'off') => {
     setOperationLoading(`${namespace}/${deployment}`);
     try {
       await api.toggleDeployment(namespace, deployment, state);
-      await refreshDeployments();
+      updateDeploymentState(namespace, deployment, state);
+      setOperationLoading(null);
     } catch (error) {
       console.error('Toggle failed:', error);
       alert(`Toggle failed: ${(error as Error).message}`);
-    } finally {
       setOperationLoading(null);
     }
   };

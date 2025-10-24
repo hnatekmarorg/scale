@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import debounce from '../utils/debounce';
 
 interface ToggleProps {
   isActive: boolean;
   onToggle: (isActive: boolean) => void;
   disabled?: boolean;
+  debounceMs?: number;
 }
 
-const Toggle = ({ isActive, onToggle, disabled = false }: ToggleProps) => {
+const Toggle = ({ isActive, onToggle, disabled = false, debounceMs = 300 }: ToggleProps) => {
+  const handleToggleImmediate = useCallback((newState: boolean) => {
+    onToggle(newState);
+  }, [onToggle]);
+
+  const handleToggle = debounce(handleToggleImmediate, debounceMs);
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!disabled) {
-      onToggle(!isActive);
+      handleToggle(!isActive);
     }
   };
 
