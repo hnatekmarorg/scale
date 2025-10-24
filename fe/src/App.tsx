@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import './styles/index.css';
-
-interface AppProps {
-  darkMode?: boolean;
-  setDarkMode?: (darkMode: boolean) => void;
-}
 
 function App() {
   const [darkModeState, setDarkModeState] = useState(false);
