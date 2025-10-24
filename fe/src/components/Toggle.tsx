@@ -1,5 +1,13 @@
-const Toggle = ({ isActive, onToggle, disabled = false }) => {
-  const handleClick = (e) => {
+import React from 'react';
+
+interface ToggleProps {
+  isActive: boolean;
+  onToggle: (isActive: boolean) => void;
+  disabled?: boolean;
+}
+
+const Toggle = ({ isActive, onToggle, disabled = false }: ToggleProps) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!disabled) {

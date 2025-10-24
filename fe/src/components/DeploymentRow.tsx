@@ -1,10 +1,25 @@
 import React from 'react';
 import Toggle from './Toggle';
 
-const DeploymentRow = ({ deployment, onToggle }) => {
+interface Deployment {
+  namespace: string;
+  name: string;
+  onReplicas: number;
+  offReplicas: number;
+  currentReplicas: number;
+  labels: Record<string, string>;
+}
+
+interface DeploymentRowProps {
+  deployment: Deployment;
+  onToggle: (namespace: string, deployment: string, state: 'on' | 'off') => void;
+  isLoading: boolean;
+}
+
+const DeploymentRow = ({ deployment, onToggle, isLoading }: DeploymentRowProps) => {
   const isActive = deployment.currentReplicas === deployment.onReplicas;
   
-  const handleToggle = (newState) => {
+  const handleToggle = (newState: boolean) => {
     onToggle(deployment.namespace, deployment.name, newState ? 'on' : 'off');
   };
 
@@ -29,6 +44,7 @@ const DeploymentRow = ({ deployment, onToggle }) => {
           <Toggle 
             isActive={isActive} 
             onToggle={handleToggle}
+            disabled={isLoading}
           />
           <span className="tooltip">ⓘ</span>
         </div>

@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import './styles/index.css';
 
+interface AppProps {
+  darkMode?: boolean;
+  setDarkMode?: (darkMode: boolean) => void;
+}
+
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkModeState, setDarkModeState] = useState(false);
 
   useEffect(() => {
     // Check system preference and saved preference
@@ -11,27 +16,27 @@ function App() {
     const savedPreference = localStorage.getItem('darkMode');
     
     if (savedPreference !== null) {
-      setDarkMode(savedPreference === 'true');
+      setDarkModeState(savedPreference === 'true');
     } else {
-      setDarkMode(prefersDark);
+      setDarkModeState(prefersDark);
     }
   }, []);
 
   useEffect(() => {
     // Apply dark mode class to document
-    if (darkMode) {
+    if (darkModeState) {
       document.documentElement.classList.add('dark-mode');
     } else {
       document.documentElement.classList.remove('dark-mode');
     }
     
     // Save preference
-    localStorage.setItem('darkMode', darkMode.toString());
-  }, [darkMode]);
+    localStorage.setItem('darkMode', darkModeState.toString());
+  }, [darkModeState]);
 
   return (
     <div className="App">
-      <Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Dashboard darkMode={darkModeState} setDarkMode={setDarkModeState} />
     </div>
   );
 }

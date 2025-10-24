@@ -1,9 +1,18 @@
 import { API_ENDPOINTS } from '../types';
 
+interface Deployment {
+  namespace: string;
+  name: string;
+  onReplicas: number;
+  offReplicas: number;
+  currentReplicas: number;
+  labels: Record<string, string>;
+}
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const api = {
-  getDeployments: async (namespace = 'default') => {
+  getDeployments: async (namespace = 'default'): Promise<Deployment[]> => {
     try {
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.DEPLOYMENTS}?namespace=${namespace}`);
       
@@ -22,7 +31,7 @@ const api = {
     }
   },
 
-  toggleDeployment: async (namespace, deployment, state) => {
+  toggleDeployment: async (namespace: string, deployment: string, state: 'on' | 'off'): Promise<any> => {
     try {
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.TOGGLE}/${namespace}/${deployment}`, {
         method: 'POST',

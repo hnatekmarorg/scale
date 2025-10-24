@@ -3,20 +3,35 @@ import { useDeployments } from '../hooks/useDeployments';
 import DeploymentRow from './DeploymentRow';
 import api from '../services/api';
 
-const Dashboard = ({ darkMode, setDarkMode }) => {
+interface Deployment {
+  namespace: string;
+  name: string;
+  onReplicas: number;
+  offReplicas: number;
+  currentReplicas: number;
+  labels: Record<string, string>;
+}
+
+interface DashboardProps {
+  darkMode: boolean;
+  setDarkMode: (darkMode: boolean) => void;
+}
+
+const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const { deployments, loading, error, refreshDeployments } = useDeployments();
   const [filter, setFilter] = useState('');
-  const [operationLoading, setOperationLoading] = useState(null);
+  const [operationLoading, setOperationLoading] = useState<string | null>(null);
 
   const filteredDeployments = useMemo(() => {
     if (!filter) return deployments;
     
     const filterLower = filter.toLowerCase();
     return deployments.filter(deployment => {
-      const labelString = Object.entries(deployment.labels)
-        .map(([key, value]) => `${key}=${value}`)
-        .join(' ')
-        .toLowerCase();
+        const labelString = Object.entries(deployment.labels)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => `${key}=${value}`)
+            .join(' ')
+            .toLowerCase();
       
       return (
         deployment.name.toLowerCase().includes(filterLower) ||
@@ -25,14 +40,14 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
     });
   }, [deployments, filter]);
 
-  const handleToggle = async (namespace, deployment, state) => {
+  const handleToggle = async (namespace: string, deployment: string, state: 'on' | 'off') => {
     setOperationLoading(`${namespace}/${deployment}`);
     try {
       await api.toggleDeployment(namespace, deployment, state);
       await refreshDeployments();
     } catch (error) {
       console.error('Toggle failed:', error);
-      alert(`Toggle failed: ${error.message}`);
+      alert(`Toggle failed: ${(error as Error).message}`);
     } finally {
       setOperationLoading(null);
     }
