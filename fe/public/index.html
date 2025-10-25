@@ -5,6 +5,9 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#4f46e5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="SCALE - Kubernetes Auto-Scaling Dashboard" />
     <meta name="description" content="Kubernetes Auto-Scaling Dashboard for monitoring and managing cluster scaling" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
@@ -16,7 +19,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+          navigator.serviceWorker.register('%PUBLIC_URL%/service-worker.js')
             .then(registration => {
               console.log('SW registered: ', registration);
             })
