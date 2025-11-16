@@ -5,14 +5,14 @@
 replicaCount: 1
 
 image:
-  repository: scale-backend
-  tag: latest
-  pullPolicy: IfNotPresent
+  repository: gitea.hnatekmar.xyz/public/scale
+  tag: be
+  pullPolicy: Always
 
 frontendImage:
-  repository: scale-frontend
-  tag: latest
-  pullPolicy: IfNotPresent
+  repository: gitea.hnatekmar.xyz/public/scale
+  tag: fe
+  pullPolicy: Always
 
 service:
   type: ClusterIP
