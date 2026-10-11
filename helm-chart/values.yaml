@@ -60,3 +60,6 @@ serviceAccount:
 # RBAC configuration
 rbac:
   create: true
+  # The namespace whose Deployments the dashboard may list and toggle. Defaults to the release
+  # namespace; set it when the models live elsewhere (SCALE in `scale`, models in `inference`).
+  namespace: ""
