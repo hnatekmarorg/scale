@@ -4,15 +4,19 @@
 
 replicaCount: 1
 
+# The estate's registry (the old gitea host is dead). The org is private, so pulls need the
+# `imagePullSecrets` below (an ESO-managed `forgejo-registry` in the release namespace).
 image:
-  repository: gitea.hnatekmar.xyz/public/scale
+  repository: forgejo.dev-k8s.srv.hnatekmar.dev/hnatekmarorg/scale
   tag: be
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 frontendImage:
-  repository: gitea.hnatekmar.xyz/public/scale
+  repository: forgejo.dev-k8s.srv.hnatekmar.dev/hnatekmarorg/scale
   tag: fe
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
 
 service:
   type: ClusterIP

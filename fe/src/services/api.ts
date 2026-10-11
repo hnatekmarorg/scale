@@ -6,6 +6,7 @@ interface Deployment {
   onReplicas: number;
   offReplicas: number;
   currentReplicas: number;
+  readyReplicas: number;
   labels: Record<string, string>;
 }
 
