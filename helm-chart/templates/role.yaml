@@ -1,12 +1,14 @@
 {{- if .Values.rbac.create }}
-# Namespace-scoped on purpose: SCALE serves exactly one namespace (the release's, where the
-# model Deployments live), so a ClusterRole over every namespace would be blast radius for
-# nothing. The backend's list filter (SCALE_NAMESPACE, default `inference`) matches this scope.
+# Namespace-scoped on purpose: SCALE serves exactly one namespace, so a ClusterRole over every
+# namespace would be blast radius for nothing. That namespace is `rbac.namespace` — by default
+# the release's, but the models usually live elsewhere (the estate runs SCALE in `scale` and
+# the Deployments in `inference`). The backend's list filter (SCALE_NAMESPACE) must name the
+# same namespace.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "scale-backend.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.rbac.namespace | default .Release.Namespace }}
   labels:
     {{- include "scale-backend.labels" . | nindent 4 }}
 rules:

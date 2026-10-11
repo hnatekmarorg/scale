@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ include "scale-backend.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.rbac.namespace | default .Release.Namespace }}
   labels:
     {{- include "scale-backend.labels" . | nindent 4 }}
 subjects:
