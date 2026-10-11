@@ -7,6 +7,7 @@ interface Deployment {
   onReplicas: number;
   offReplicas: number;
   currentReplicas: number;
+  readyReplicas: number;
   labels: Record<string, string>;
 }
 
@@ -24,7 +25,6 @@ export const useDeployments = (): UseDeploymentsReturn => {
 
   const fetchDeployments = async (): Promise<void> => {
     try {
-      setLoading(true);
       setError(null);
       const data = await api.getDeployments();
       setDeployments(data);
@@ -42,6 +42,17 @@ export const useDeployments = (): UseDeploymentsReturn => {
   useEffect(() => {
     fetchDeployments();
   }, []);
+
+  // While any deployment is on but not yet ready (a model load takes minutes), poll so the
+  // row's ready count catches up without a manual refresh.
+  useEffect(() => {
+    const starting = deployments.some(
+      (d) => d.currentReplicas > 0 && d.readyReplicas < d.currentReplicas
+    );
+    if (!starting) return;
+    const timer = setInterval(fetchDeployments, 5000);
+    return () => clearInterval(timer);
+  }, [deployments]);
 
   return {
     deployments,

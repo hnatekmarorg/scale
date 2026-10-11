@@ -24,6 +24,7 @@ type Deployment struct {
 	OnReplicas      int32             `json:"onReplicas"`
 	OffReplicas     int32             `json:"offReplicas"`
 	CurrentReplicas int32             `json:"currentReplicas"`
+	ReadyReplicas   int32             `json:"readyReplicas"`
 	Labels          map[string]string `json:"labels"`
 }
 
@@ -47,6 +48,15 @@ type ErrorResponse struct {
 }
 
 var clientset *kubernetes.Clientset
+
+// targetNamespace is the one namespace SCALE serves. The chart's Role is scoped to the release
+// namespace, so a wider list would only 403; the default matches the estate's inference stack.
+func targetNamespace() string {
+	if ns := os.Getenv("SCALE_NAMESPACE"); ns != "" {
+		return ns
+	}
+	return "inference"
+}
 
 func init() {
 	// Initialize Kubernetes client
@@ -76,8 +86,8 @@ func init() {
 func getDeploymentsHandler(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Handling GET /api/v1/deployments request", "method", r.Method, "url", r.URL.String())
 
-	// List deployments from all namespaces
-	deployments, err := clientset.AppsV1().Deployments("").List(context.Background(), metav1.ListOptions{})
+	// List deployments in the one namespace SCALE serves.
+	deployments, err := clientset.AppsV1().Deployments(targetNamespace()).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		slog.Error("Failed to list deployments", "error", err)
 		http.Error(w, fmt.Sprintf("Failed to list deployments: %v", err), http.StatusInternalServerError)
@@ -108,6 +118,7 @@ func getDeploymentsHandler(w http.ResponseWriter, r *http.Request) {
 			OnReplicas:      onReplicas,
 			OffReplicas:     offReplicas,
 			CurrentReplicas: *deployment.Spec.Replicas,
+			ReadyReplicas:   deployment.Status.ReadyReplicas,
 			Labels:          labels,
 		})
 	}

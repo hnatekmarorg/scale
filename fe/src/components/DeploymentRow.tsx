@@ -7,6 +7,7 @@ interface Deployment {
   onReplicas: number;
   offReplicas: number;
   currentReplicas: number;
+  readyReplicas: number;
   labels: Record<string, string>;
 }
 
@@ -50,7 +51,9 @@ const DeploymentRow = ({ deployment, onToggle, isLoading }: DeploymentRowProps) 
         </div>
       </td>
       <td className="replica-count">
-        {deployment.currentReplicas} replicas
+        {deployment.currentReplicas === 0
+          ? 'off'
+          : `${deployment.readyReplicas}/${deployment.currentReplicas} ready`}
       </td>
     </>
   );
